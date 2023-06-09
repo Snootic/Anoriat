@@ -804,6 +804,33 @@ def alterar_rend(rendimento) -> str:
     return 'Alterado'
 
 
+def deletar_rendimento(var) -> str:
+    if not os.path.exists(bdrendimentos) or os.stat(bdrendimentos).st_size == 0:
+        criar_bdrendimentos()
+    elif not os.path.exists(bdrendimentos_cancelados):
+        with open (bdrendimentos_cancelados, 'w', encoding='utf-8') as arquivo:
+            arquivo.write('')
+
+    else:
+        rendimento = []
+        with open (bdrendimentos, 'r', encoding='utf-8') as arquivo:
+            linhas = arquivo.readlines()
+            for i in linhas:
+                rendimento.append(i.rstrip().split('|'))
+            rendimento.remove(rendimento[0])
+        for i in range(len(rendimento)):
+            for x in range(len(var)):
+                if var[x][0] == int(rendimento[i][0]):
+                    linhas[i+1] = ""
+                    with open(bdrendimentos, "w", encoding='utf-8') as arquivo:
+                        arquivo.writelines(linhas)
+                    for x in range(len(rendimento[i])):
+                        rendimento_cancelado = (f'{rendimento[i][0]}|{rendimento[i][1]}|{rendimento[i][2]}'
+                            f'|{rendimento[i][3]}|{rendimento[i][4]}|{rendimento[i][5]}|{rendimento[i][6]}')
+                        break
+                    return "deletado"
+
+
 def relatorio_rend() -> str:
     if not os.path.exists(bdrendimentos) or os.stat(bdrendimentos).st_size == 0:
         criar_bdrendimentos()
