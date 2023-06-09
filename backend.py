@@ -15,6 +15,7 @@ bdcadastro: str = "credenciais_cadastradas.txt"
 bdlogin: str = 'login_config.txt'
 bdpedidos_cancelados: str = 'pedidos_cancelados.txt'
 bdrendimentos: str = "rendimentos.txt"
+bdrendimentos_cancelados: str = 'rendimentos_cancelados.txt'
 
 
 def logando(usuario, senha, manter) -> str:
@@ -826,8 +827,10 @@ def deletar_rendimento(var) -> str:
                         arquivo.writelines(linhas)
                     for x in range(len(rendimento[i])):
                         rendimento_cancelado = (f'{rendimento[i][0]}|{rendimento[i][1]}|{rendimento[i][2]}'
-                            f'|{rendimento[i][3]}|{rendimento[i][4]}|{rendimento[i][5]}|{rendimento[i][6]}')
+                            f'|{rendimento[i][3]}|{rendimento[i][4]}|{rendimento[i][5]}|{rendimento[i][6]}\n')
                         break
+                    with open(bdrendimentos_cancelados, 'a', encoding='utf-8') as arquivo:
+                        arquivo.writelines(rendimento_cancelado)
                     return "deletado"
 
 
