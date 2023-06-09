@@ -1042,7 +1042,75 @@ def tela_rendimentos():
         botao_confirmar = ttk.Button(adicionar, text='confirmar', command=confirmar)
         botao_confirmar.pack(pady=10)
                 
+    def deletar():
 
+        # Abre tela de confirmação
+        # Para cancelar os pedidos selecionados
+
+        delete = ttk.Toplevel()
+        delete.title('Confirmar deleção')
+        delete.geometry('530x325')
+
+        aviso = ttk.StringVar(value = 'Os seguintes rendimentos serão deletados')
+        aviso_label = ttk.Label(delete, textvariable=aviso)
+        aviso_label.pack(pady=10)
+
+        dados.bind('<<TreeviewSelect>>', lambda event: (rendimento_selecionado(), checar()))
+
+        rendimentos = ttk.Treeview(delete, columns=('ID','IDPED','TIPO',
+                                                'VALOR','SIT','DATA'),
+                                                show = 'headings',
+                                                height = 10)
+        colunas = [('ID','ID', 30),
+               ('IDPED', 'ID Pedido', 70),
+               ('TIPO','Tipo', 100),
+               ('VALOR','Valor', 100),
+               ('SIT','Situação', 100),
+               ('DATA','Data', 80)]
+        for column_name, heading_text, width in colunas:
+            if column_name == 'VALOR':
+                rendimentos.column(column_name, anchor='w', width=width)
+            else:
+                rendimentos.column(column_name, anchor='center', width=width)
+            rendimentos.heading(column_name, text=heading_text)
+        rendimentos.pack()
+
+        def checar():
+            try:
+                for i in rendimentos.get_children():
+                    rendimentos.delete(i)
+                rendimentos_selecionados.reverse()
+                if len(rendimentos_selecionados) > 0:
+                    for i in rendimentos_selecionados:
+                        id, idped, tipo, valor, situa, data = i
+                        texto_formatado = (id, idped, tipo, valor, situa, data)
+                        rendimentos.insert(parent='', index=0, values= texto_formatado)
+                        aviso.set('Os seguintes rendimentos serão deletados')
+                else:
+                    aviso.set('Nenhum rendimento selecionado')
+            except NameError:
+                aviso.set('Nenhum rendimento selecionado')
+
+        def excluir_rend(rendimento):
+            resultado = df.deletar_rendimento(rendimento)
+            if resultado == "deletado":
+                for i in rendimentos.get_children():
+                    rendimentos.delete(i)
+                ver_rendimentos()
+                rendimentos_selecionados.clear()
+                dados.selection_clear()
+            
+        botao_confirmar = ttk.Button(delete, text='confirmar',
+                                    command=lambda: excluir_rend(rendimentos_selecionados))
+        botao_confirmar.pack(pady=10)
+
+        def fechar():
+            dados.bind('<<TreeviewSelect>>', rendimento_selecionado)
+            delete.destroy()
+        delete.protocol("WM_DELETE_WINDOW", fechar)
+        checar()
+    
+    
     def rendimento_selecionado(*args):
         if len(dados.selection()) == 0:
             botao_detalhes.pack_forget()
@@ -1155,7 +1223,7 @@ def tela_rendimentos():
     botao_alterar.pack(pady=2)
 
     botao_deletar = ttk.Button(frame_botoes_funcoes, text='Deletar rendimento(s)',
-                                command='',width=23)
+                                command=deletar,width=23)
     botao_deletar.pack(pady=2)
 
     botao_detalhes = ttk.Button(frame_botoes_funcoes, text='Detalhes',
