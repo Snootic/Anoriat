@@ -120,6 +120,10 @@ def trocar_tema(modo):
         arquivo.writelines(linhas)
 
 
+def criar_bdcadastro():
+    with open(bdcadastro, 'w') as arquivo:
+        arquivo.write('')
+
 # TESTE funcao de editar cadastro, inutil por enquanto
 
 

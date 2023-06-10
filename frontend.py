@@ -767,7 +767,6 @@ def tela_rendimentos():
         sel_tipo['value'] = lista
         return lista, lista2
 
-
     def ver_rendimentos(*args):
 
         # Chama função para visualizar os rendimentos   
@@ -782,14 +781,13 @@ def tela_rendimentos():
             texto_formatado = (id, idped, tipo, valor, situacao, data)
             dados.insert(parent = '', index = 0, values = texto_formatado)
         ver_tipos()
-    
 
     def add_rendimento():
         
 
         adicionar = ttk.Toplevel()
         adicionar.title('Adicionar Rendimento')
-        adicionar.geometry('300x320')
+        adicionar.geometry('320x320')
 
         adicionar_label = ttk.Label(adicionar, text = 'Adicionar um rendimento')
         adicionar_label.pack(pady = 10)
@@ -797,21 +795,18 @@ def tela_rendimentos():
         frame_geral = ttk.Frame(adicionar)
         frame_geral.pack()
         frame_labels = ttk.Frame(frame_geral)
-        frame_labels.pack(side = 'left', fill = 'y')
+        frame_labels.pack(side = 'left', fill = 'y',ipadx=10)
         frame_entrys = ttk.Frame(frame_geral)
         frame_entrys.pack(side = 'right', fill = 'y')
 
-        idped_var = tk.StringVar()
         tipo_var = tk.StringVar(value = "Saida")
         valor_var = tk.StringVar(value='0.0')
         situacao_var = tk.StringVar()
-        detalhes_var = tk.StringVar()
 
-        
         tipo_label = ttk.Label(frame_labels, text = 'Tipo')
-        tipo_label.pack(pady = 5, anchor = 'w')
+        tipo_label.pack(pady = 3, anchor = 'w')
         valor_label = ttk.Label(frame_labels, text = 'Valor Total R$')
-        valor_label.pack(pady = 10, anchor = 'w')
+        valor_label.pack(pady = 9, anchor = 'w')
         situacao_label = ttk.Label(frame_labels, text = 'Situação atual')
         situacao_label.pack(pady = 5, anchor = 'w')
         detalhes_label = ttk.Label(frame_labels, text = 'Detalhes')
@@ -822,16 +817,15 @@ def tela_rendimentos():
                 tipo_var.set("Saida")
             elif tipo_var.get() == "Saida":
                 tipo_var.set("Entrada")       
-
-        
-        tipo = ttk.Checkbutton(frame_entrys, width=12, textvariable = tipo_var,
+ 
+        tipo = ttk.Checkbutton(frame_entrys, width=8, textvariable = tipo_var,
                                 command= butao_tipo, bootstyle= 'round-toggle' )
-        tipo.pack(anchor='e', ipady=5)
+        tipo.pack(anchor='w', ipady=5)
 
-        valor = ttk.Entry(frame_entrys, width = 12, textvariable= valor_var)
+        valor = ttk.Entry(frame_entrys, width = 20, textvariable= valor_var)
         valor.pack(anchor='e', pady=2)
 
-        situacao = ttk.Combobox(frame_entrys, width = 12, textvariable= situacao_var)
+        situacao = ttk.Combobox(frame_entrys, width = 18, textvariable= situacao_var)
         situacao.pack(anchor='e', pady=2)
 
         listas = ver_tipos()
@@ -839,7 +833,7 @@ def tela_rendimentos():
         situacao['value'] = lista2
 
 
-        detalhe = ttk.Text(frame_entrys, width = 22,
+        detalhe = ttk.Text(frame_entrys, width = 20,
                            height=8)
         detalhe.pack(anchor='e', pady=2)
 
@@ -865,7 +859,6 @@ def tela_rendimentos():
 
         botao_confirmar = ttk.Button(adicionar, text='confirmar', command=confirmar)
         botao_confirmar.pack(pady=10)
-
 
     def detalhes_rend():
         detalhes = tk.Toplevel()
@@ -912,7 +905,6 @@ def tela_rendimentos():
         botao_fechar = ttk.Button(detalhes, text='Fechar', command=lambda: detalhes.destroy())
         botao_fechar.pack(pady=10)
           
-
     def alterar_rend():
 
         # Abre tela para alterar pedidos
@@ -922,7 +914,7 @@ def tela_rendimentos():
 
         adicionar = ttk.Toplevel()
         adicionar.title('Alterar Rendimento')
-        adicionar.geometry('405x400')
+        adicionar.geometry('320x380')
 
         adicionar_label = ttk.Label(adicionar, text='Alterar um rendimento')
         adicionar_label.pack(pady=10)
@@ -943,13 +935,13 @@ def tela_rendimentos():
         detalhes_var = tk.StringVar()
 
         idrend_label = ttk.Label(frame_labels, text = 'Id Rendimento')
-        idrend_label.pack(pady = 5, anchor = 'w')
+        idrend_label.pack(pady = 8, anchor = 'w')
         idped_label = ttk.Label(frame_labels, text = 'Id Pedido')
         idped_label.pack(pady = 5, anchor = 'w')
         tipo_label = ttk.Label(frame_labels, text = 'Tipo')
         tipo_label.pack(pady = 5, anchor = 'w')
         valor_label = ttk.Label(frame_labels, text = 'Valor Total R$')
-        valor_label.pack(pady = 10, anchor = 'w')
+        valor_label.pack(pady = 8, anchor = 'w')
         situacao_label = ttk.Label(frame_labels, text = 'Situação atual')
         situacao_label.pack(pady = 5, anchor = 'w')
         detalhes_label = ttk.Label(frame_labels, text = 'Detalhes')
@@ -993,31 +985,30 @@ def tela_rendimentos():
                 tipo_var.set("Entrada")
                 tipo.configure(text="Entrada")
 
-        idrend = ttk.Entry(frame_entrys, width=36, textvariable=idrend_var)
-        idrend.pack(pady=5,anchor='e')
+        idrend = ttk.Entry(frame_entrys, width=20, textvariable=idrend_var)
+        idrend.pack(pady=2,anchor='e')
 
         idrend.bind('<KeyRelease>', lambda event: checar_id(event))
         
-        idpedido = ttk.Entry(frame_entrys, width=36, textvariable=idped_var)
-        idpedido.pack(pady=5,anchor='e')
-
+        idpedido = ttk.Entry(frame_entrys, width=20, textvariable=idped_var)
+        idpedido.pack(pady=2,anchor='e')
         
-        tipo = ttk.Checkbutton(frame_entrys, width=12, text="Saida",
+        tipo = ttk.Checkbutton(frame_entrys, width=8, text="Saida",
                                variable= checkbtn,
                                  command= butao_tipo, bootstyle= 'round-toggle' )
-        tipo.pack(anchor='e', ipady=5)
+        tipo.pack(anchor='w', ipady=5)
 
-        valor = ttk.Entry(frame_entrys, width = 12, textvariable= valor_var)
+        valor = ttk.Entry(frame_entrys, width = 20, textvariable= valor_var)
         valor.pack(anchor='e', pady=2)
 
-        situacao = ttk.Combobox(frame_entrys, width = 12, textvariable= situacao_var)
+        situacao = ttk.Combobox(frame_entrys, width = 18, textvariable= situacao_var)
         situacao.pack(anchor='e', pady=2)
 
         listas = ver_tipos()
         lista1, lista2 = listas
         situacao['value'] = lista2
 
-        detalhe = ttk.Text(frame_entrys, width = 22,
+        detalhe = ttk.Text(frame_entrys, width = 20,
                            height=8)
         detalhe.pack(anchor='e', pady=2)   
 
@@ -1041,7 +1032,7 @@ def tela_rendimentos():
 
         botao_confirmar = ttk.Button(adicionar, text='confirmar', command=confirmar)
         botao_confirmar.pack(pady=10)
-                
+
     def deletar():
 
         # Abre tela de confirmação
@@ -1049,7 +1040,7 @@ def tela_rendimentos():
 
         delete = ttk.Toplevel()
         delete.title('Confirmar deleção')
-        delete.geometry('530x325')
+        delete.geometry('520x260')
 
         aviso = ttk.StringVar(value = 'Os seguintes rendimentos serão deletados')
         aviso_label = ttk.Label(delete, textvariable=aviso)
@@ -1109,8 +1100,7 @@ def tela_rendimentos():
             delete.destroy()
         delete.protocol("WM_DELETE_WINDOW", fechar)
         checar()
-    
-    
+      
     def rendimento_selecionado(*args):
         if len(dados.selection()) == 0:
             botao_detalhes.pack_forget()
@@ -1138,10 +1128,27 @@ def tela_rendimentos():
             botao_detalhes.pack_forget()
         rendimentos.bind('<Button-1>', verificar_evento)
 
+    def pesquisar(event):
+        if pesquisa_var.get() == 'Pesquisar um rendimento':
+            pesquisa_var.set('')
+        pesquisa.bind('<KeyRelease>', pesquisar)
+        for i in dados.get_children():
+            dados.delete(i)
+        parametro = pesquisa_var.get().lower()
+        texto = df.ver_rendimentos('Todos')
+        texto.reverse()
+        for i in range(len(texto)):
+            for x in range(1,7):
+                if texto[i][x].lower().__contains__(parametro):
+                    text= f'{texto[i][0]},{texto[i][1]},{texto[i][2]},R$ {texto[i][3]},{texto[i][4]},{texto[i][5]}'
+                    texto_formatado = (text.split(','))
+                    dados.insert(parent = '', index = 0, values = texto_formatado)
+                    break
 
     rendimentos = ttk.Toplevel() # Tela de Rendimentos
     rendimentos.title("Rendimentos - Anoriat") # Título da tela
-    rendimentos.geometry('780x550')
+    rendimentos.geometry('700x550')
+    rendimentos.geometry(f"+{x-200}+{y-150}")
 
     botoes_telas_frame = ttk.Frame(rendimentos)
     botoes_telas_frame.pack(pady = 10)
@@ -1155,7 +1162,7 @@ def tela_rendimentos():
     pesquisa_var = tk.StringVar(value='Pesquisar um rendimento')
     pesquisa = tk.Entry(frame_funcoes, textvariable=pesquisa_var, width=40)
     pesquisa.pack()
-    pesquisa.bind('<Button-1>', ver_rendimentos)
+    pesquisa.bind('<Button-1>', pesquisar)
 
     tipo_var = tk.StringVar(value='Selecione um Tipo')
     sel_tipo = ttk.Combobox(frame_botoes_funcoes, textvariable=tipo_var, width=23)
@@ -1168,15 +1175,14 @@ def tela_rendimentos():
     # Listagem Rendimentos
 
     dados = ttk.Treeview(frame_funcoes, columns=('ID','IDPED','TIPO',
-                                                 'VALOR','SIT','DATA',
-                                                 'DESC'),
+                                                 'VALOR','SIT','DATA'),
                                                  show = 'headings',
                                                  height=30)
     colunas = [('ID','ID', 30),
                ('IDPED', 'ID Pedido', 70),
-               ('TIPO','Tipo', 100),
-               ('VALOR','Valor', 100),
-               ('SIT','Situação', 100),
+               ('TIPO','Tipo', 60),
+               ('VALOR','Valor', 90),
+               ('SIT','Situação', 150),
                ('DATA','Data', 80)]
     for column_name, heading_text, width in colunas:
         dados.column(column_name, anchor='center', width=width)
@@ -1196,41 +1202,43 @@ def tela_rendimentos():
         elif tela == 'produtos':
             tela_produtos()
             rendimentos.destroy()
+        elif tela == 'pedidos':
+            tela_pedidos()
+            rendimentos.destroy()
         else:
-            if isinstance(home, ttk.Toplevel):
-                login.destroy()
-            else:
-                home.destroy()
+            login.destroy()
      
-
     botao_home = ttk.Button(botoes_telas_frame, text = 'Início',
-                            command = lambda: fechar('home'), width=15)
+                            command = lambda: fechar('home'), width=12)
     botao_home.pack(side='left',padx=2)
     botao_clientes = ttk.Button(botoes_telas_frame, text = 'Clientes',
-                            command = lambda: fechar('clientes'), width=15)
+                                command = lambda: fechar('clientes'), width=12)
     botao_clientes.pack(side='left',padx=2)
+    botao_pedidos = ttk.Button(botoes_telas_frame, text='Pedidos',
+                               command=lambda: fechar('pedidos'), width=12)
+    botao_pedidos.pack(side='left', padx=2)
     botao_produtos = ttk.Button(botoes_telas_frame, text='Produtos',
-                                 command=lambda: fechar('produtos'), width=15)
+                                command=lambda: fechar('produtos'), width=12)
     botao_produtos.pack(side='left', padx=2)
 
     
     botao_add = ttk.Button(frame_botoes_funcoes, text='Adicionar rendimento(s)',
-                           command= add_rendimento,width=23)
+                           command= add_rendimento,width=19)
     botao_add.pack(pady=2)
     
     botao_alterar = ttk.Button(frame_botoes_funcoes, text='Alterar rendimento(s)',
-                               command= alterar_rend,width=23)
+                               command= alterar_rend,width=19)
     botao_alterar.pack(pady=2)
 
     botao_deletar = ttk.Button(frame_botoes_funcoes, text='Deletar rendimento(s)',
-                                command=deletar,width=23)
+                                command=deletar,width=19)
     botao_deletar.pack(pady=2)
 
     botao_detalhes = ttk.Button(frame_botoes_funcoes, text='Detalhes',
-                                 command=detalhes_rend,width=23)
+                                 command=detalhes_rend,width=19)
 
     botao_relatorio = ttk.Button(frame_botoes_funcoes, text='Exportar relatório',
-                                 command=df.relatorio_rend,width=23)
+                                 command=df.relatorio_rend,width=19)
     botao_relatorio.pack(pady=2)
 
     rendimentos.protocol("WM_DELETE_WINDOW", lambda: fechar(''))
@@ -2298,12 +2306,12 @@ def tela_login(prioridade,tema):
 
 if __name__ == '__main__':
     if not os.path.exists('login_config.txt') or os.stat('login_config.txt').st_size == 0:
-
         with open('login_config.txt', 'w', encoding='utf-8') as arquivo:
             arquivo.write('tema=darkly\nusername=\nemail=\nsenha=\n')
+
     elif not os.path.exists('credenciais_cadastradas.txt'):
-        with open('credenciais_cadastradas.txt', 'w', encoding='utf-8') as arquivo:
-            arquivo.write('')
+        df.criar_bdcadastro()
+
     with open('login_config.txt', 'r', encoding='utf-8') as arquivo:
         manter = []
         for i in arquivo:
