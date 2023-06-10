@@ -799,7 +799,7 @@ def tela_rendimentos():
         frame_entrys = ttk.Frame(frame_geral)
         frame_entrys.pack(side = 'right', fill = 'y')
 
-        tipo_var = tk.StringVar(value = "Saida")
+        tipo_var = tk.StringVar(value = "Saída")
         valor_var = tk.StringVar(value='0.0')
         situacao_var = tk.StringVar()
 
@@ -814,8 +814,8 @@ def tela_rendimentos():
 
         def butao_tipo():
             if tipo_var.get() == "Entrada":
-                tipo_var.set("Saida")
-            elif tipo_var.get() == "Saida":
+                tipo_var.set("Saída")
+            elif tipo_var.get() == "Saída":
                 tipo_var.set("Entrada")       
  
         tipo = ttk.Checkbutton(frame_entrys, width=8, textvariable = tipo_var,
@@ -851,8 +851,12 @@ def tela_rendimentos():
                     if len(descricao) == 1:
                         descricao = ''
                     data = date.today().strftime("%d/%m/%Y")
+                    entr_saida = tipo_var.get()
+                    valor_final = valor_var.get()
+                    if entr_saida == 'Saída':
+                        valor_final = '-'+valor_final
                     rendimento = []
-                    rendimento.append((idped, tipo_var.get(), valor_var.get(), situacao_var.get(), data, descricao))
+                    rendimento.append((idped, entr_saida, valor_final, situacao_var.get(), data, descricao))
                     add = df.add_rendimentos(rendimento)
                     if add == "cadastrado":
                         ver_rendimentos("Todos")
@@ -928,10 +932,9 @@ def tela_rendimentos():
 
         idrend_var = tk.StringVar()
         idped_var = tk.StringVar()
-        tipo_var = tk.StringVar(value = "Saida")
+        tipo_var = tk.StringVar(value = "Saída")
         valor_var = tk.StringVar(value='0.0')
         situacao_var = tk.StringVar()
-        data_var = tk.StringVar()
         detalhes_var = tk.StringVar()
 
         idrend_label = ttk.Label(frame_labels, text = 'Id Rendimento')
@@ -954,15 +957,19 @@ def tela_rendimentos():
                 if idrend.get() == rendimento[i][0]:
                     idped_var.set(f'{rendimento[i][1]}')
                     tipo_var.set(f'{rendimento[i][2]}')
-                    if tipo_var.get() == "Saida":
+                    if tipo_var.get() == "Saída":
                         checkbtn.set(False)
-                        tipo.configure(variable=checkbtn,text="Saida")
+                        tipo.configure(text="Saída")
                     else:
                         checkbtn.set(True)
-                        tipo.configure(variable=checkbtn,text="Entrada")
+                        tipo.configure(text="Entrada")
                     valor_var.set(f'{rendimento[i][3]}')
+                    try:
+                        int(idped_var.get())
+                        valor.configure(state='disabled')
+                    except ValueError:
+                        pass
                     situacao_var.set(f'{rendimento[i][4]}')
-                    data_var.set(f'{rendimento[i][5]}')
                     detalhe.delete('1.0','end')
                     detalhe.insert('end',rendimento[i][6].replace('æ','\n'))
                     encontrado = True
@@ -971,16 +978,15 @@ def tela_rendimentos():
             if not encontrado:
                 idped_var.set(f'Não encontrado')
                 checkbtn.set(False)
-                tipo.configure(variable=checkbtn,text="Saida")
+                tipo.configure(text="Saída")
                 valor_var.set(f'0.0')
                 situacao_var.set(f'Não encontrado')
-                data_var.set(f'0000-00-00')
                 detalhes_var.set(f'Não encontrado')
 
         def butao_tipo():
             if checkbtn.get() == False:
-                tipo_var.set("Saida")
-                tipo.configure(text="Saida")
+                tipo_var.set("Saída")
+                tipo.configure(text="Saída")
             elif checkbtn.get() == True:
                 tipo_var.set("Entrada")
                 tipo.configure(text="Entrada")
@@ -990,10 +996,10 @@ def tela_rendimentos():
 
         idrend.bind('<KeyRelease>', lambda event: checar_id(event))
         
-        idpedido = ttk.Entry(frame_entrys, width=20, textvariable=idped_var)
+        idpedido = ttk.Entry(frame_entrys, width=20, textvariable=idped_var, state='disabled')
         idpedido.pack(pady=2,anchor='e')
         
-        tipo = ttk.Checkbutton(frame_entrys, width=8, text="Saida",
+        tipo = ttk.Checkbutton(frame_entrys, width=8, text="Saída",
                                variable= checkbtn,
                                  command= butao_tipo, bootstyle= 'round-toggle' )
         tipo.pack(anchor='w', ipady=5)
@@ -1023,8 +1029,18 @@ def tela_rendimentos():
                     adicionar_label.configure(text="Os campos obrigatórios não podem estar em branco")
                 else:
                     descricao = (detalhe.get(1.0, 'end').rstrip().replace('\n', 'æ'))
+                    data = date.today().strftime("%d/%m/%Y")
+                    entr_saida = tipo_var.get()
+                    valor_final = valor_var.get()
+                    if valor_final.__contains__('-'):
+                        if entr_saida == 'Entrada':
+                            valor_final = valor_final.replace('-','')
+                            print(valor_final)
+                    else:
+                        if entr_saida == 'Saída':
+                            valor_final = '-'+valor_final
                     rendimento = []
-                    rendimento.append((idrend_var.get(),idped_var.get(),tipo_var.get(),valor_var.get(), situacao_var.get(),data_var.get(), descricao))
+                    rendimento.append((idrend_var.get(),idped_var.get(),entr_saida,valor_final, situacao_var.get(),data, descricao))
                     att = df.alterar_rend(rendimento)
                     if att == "Alterado":
                         ver_rendimentos("Todos")
