@@ -880,4 +880,29 @@ def relatorio_rend() -> str:
                 arquivo.writelines(texto_formatado)                
         
     return "salvo"
+
+def pedinrend() -> None:
+    if not os.path.exists(bdrendimentos) or os.stat(bdrendimentos).st_size == 0:
+        criar_bdrendimentos()
+
+        pedidos = []
+        with open (bdpedido, 'r', encoding='utf-8') as arquivo:
+            linhaped = arquivo.readline()
+            for i in linhaped:
+                pedidos.append(i.rstrip().split('|'))
+                print("print 1 ",pedidos)
+
+            if len(linhaped):
+                idrendimento = len(linhaped)
+            else:
+                idrendimento = pedidos[-1][0]
+                idrendimento = (int(idrendimento))+1
+            pedidos.remove(pedidos[0])
+            for x in pedidos:
+                id, idprod, quant, idcli, valor, situa, data, detalhe = x
+                tipo = "Entrada"
+                detalhes = ''
+                arquivo.writelines(f'{idrendimento}|{id}|{tipo}|{valor}|{situa}|{data}|{detalhes}')
+                ver_rendimentos("Todos")
+                break
 # Fim da seção RENDIMENTOS}
