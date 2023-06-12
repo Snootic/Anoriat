@@ -335,7 +335,7 @@ def relatorio_produtos() -> str:
                     descricao_formatada = ' '
                 for linha in descricao_formatada:
                     for i in range(len(linha)):
-                        if linha[i] == descricao_formatada[-1]:
+                        if linha == descricao_formatada[-1]:
                             texto_formatado +=f'{linha[i]:^20}|\n'+divisores
                         else:
                             texto_formatado +=(f'{linha[i]:^20}|\n'
