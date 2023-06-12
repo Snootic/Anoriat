@@ -624,7 +624,14 @@ def add_pedidos(pedido) -> str:
         else:
             idpedido = id[-1][0]
             idpedido = (int(idpedido))+1
-
+    with open(bdpedidos_cancelados, 'r', encoding='utf-8') as arquivo:
+        linhas = arquivo.readlines()
+        id = []
+        for i in linhas:
+            id.append(i.rstrip().split('|'))
+        for i in range(len(id)):
+            if int(idpedido) == int(id[i][0]):
+                idpedido = int(id[i][0]) + 1
     with open(bdpedido, 'a', encoding='utf-8') as arquivo:
         for i in pedido:
             idprod, quantd, idcliente, valor, situacao, data, desc = i
@@ -725,7 +732,6 @@ def relatorio_pedidos() -> str:
             for linha in descricao_formatada:
                 for i in range(len(linha)):
                     if linha == descricao_formatada[-1] and linha[i] == linha [-1]:  # Verifica se é a última linha
-                        print(type(texto_formatado))
                         texto_formatado += f'{linha[i]:^20}|\n' + divisores
                     else:
                         texto_formatado +=(f'{linha[i]:^20}|\n'
@@ -757,6 +763,7 @@ def criar_bdrendimentos() -> None:
 
 
 def ver_rendimentos(tipo) -> list:
+    pedinrend()
     if not os.path.exists(bdrendimentos) or os.stat(bdrendimentos).st_size == 0:
         criar_bdrendimentos()
     
@@ -889,11 +896,14 @@ def relatorio_rend() -> str:
         
     return "salvo"
 
+
 def pedinrend() -> None:
     if not os.path.exists(bdrendimentos) or os.stat(bdrendimentos).st_size == 0:
         criar_bdrendimentos()
     elif not os.path.exists(bdpedidos_cancelados):
         criar_bdpedido_cancelado()
+    elif not os.path.exists(bdpedido):
+        criar_bdpedido
 
     pedidos = []
     with open (bdpedido, 'r', encoding='utf-8') as arquivo:
@@ -901,31 +911,31 @@ def pedinrend() -> None:
         for i in linhaped:
             pedidos.append(i.rstrip().split('|'))
         pedidos.remove(pedidos[0])
-    with open(bdrendimentos, 'r', encoding='utf-8') as arquivo:
-        linharend = arquivo.readlines()
-        rendimentos = []
-        for i in linharend:
-            rendimentos.append(i.rstrip().split('|'))
-
     for x in pedidos:
         id, idprod, quant, idcli, valor, situa, data, detalhe = x
         tipo = "Entrada"
         detalhes = f'Pedido realizado pelo cliente de ID: {idcli} no dia {data}'
+        with open(bdrendimentos, 'r', encoding='utf-8') as arquivo:
+            linharend = arquivo.readlines()
+            rendimentos = []
+            for i in linharend:
+                rendimentos.append(i.rstrip().split('|'))
+        if len(rendimentos) == 1:
+            idrendimento = 1
+        else:
+            idrendimento = rendimentos[-1][0]
+            idrendimento = (int(idrendimento))+1
         for i in range(len(rendimentos)):
-            if id == rendimentos[i][1]:
+            if rendimentos[i][1] == 'IDPED':
+                pass
+            elif str(id) == str(rendimentos[i][1]):
                 idrendimento = rendimentos[i][0]
                 with open(bdrendimentos, 'w', encoding='utf-8') as arquivo:
                     linharend[i] = f'{idrendimento}|{id}|{tipo}|{valor}|{situa}|{data}|{detalhes}\n'
-                    print(linharend)
                     arquivo.writelines(linharend)
-            else:
-                if len(rendimentos) == 1:
-                    idrendimento = 1
-                    print(idrendimento)
-                else:
-                    idrendimento = rendimentos[-1][0]
-                    idrendimento = (int(idrendimento))+1
-                with open(bdrendimentos, 'a', encoding='utf-8') as arquivo:
+                break
+        else:
+            with open(bdrendimentos, 'a', encoding='utf-8') as arquivo:
                     arquivo.writelines(f'{idrendimento}|{id}|{tipo}|{valor}|{situa}|{data}|{detalhes}\n')
     
     with open(bdpedidos_cancelados, 'r', encoding='utf-8') as arquivo:
@@ -938,20 +948,26 @@ def pedinrend() -> None:
             id,idprod,quant,idcliente,valor,situacao,data,detalhe = x
             tipo = 'Saída'
             detalhes = f'Pedido cancelado pelo cliente de ID: {idcliente} no dia {data}'
+            with open(bdrendimentos, 'r', encoding='utf-8') as arquivo:
+                linharend = arquivo.readlines()
+                rendimentos = []
+                for i in linharend:
+                    rendimentos.append(i.rstrip().split('|'))
+            if len(rendimentos) == 1:
+                idrendimento = 1
+            else:
+                idrendimento = rendimentos[-1][0]
+                idrendimento = (int(idrendimento))+1
             for i in range(len(rendimentos)):
-                if id == rendimentos[i][1]:
+                if rendimentos[i][1] == 'IDPED':
+                    pass
+                elif str(id) == str(rendimentos[i][1]):
                     idrendimento = rendimentos[i][0]
                     with open(bdrendimentos, 'w', encoding='utf-8') as arquivo:
                         linharend[i] = f'{idrendimento}|{id}|{tipo}|-{valor}|{situacao}|{data}|{detalhes}\n'
-                        print(linharend)
                         arquivo.writelines(linharend)
-                else:
-                    if len(rendimentos) == 1:
-                        idrendimento = 1
-                        print(idrendimento)
-                    else:
-                        idrendimento = rendimentos[-1][0]
-                        idrendimento = (int(idrendimento))+1
-                    with open(bdrendimentos, 'a', encoding='utf-8') as arquivo:
-                        arquivo.writelines(f'{idrendimento}|{id}|{tipo}|{valor}|{situacao}|{data}|{detalhes}\n')
+                    break
+            else:
+                with open(bdrendimentos, 'a', encoding='utf-8') as arquivo:
+                    arquivo.writelines(f'{idrendimento}|{id}|{tipo}|{valor}|{situacao}|{data}|{detalhes}\n')
 # Fim da seção RENDIMENTOS}

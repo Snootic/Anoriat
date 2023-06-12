@@ -777,14 +777,31 @@ def tela_rendimentos():
         texto.reverse()
         for linha in texto:
             id, idped, tipo, valor, situacao, data, detalhes = linha
-            valor = f'R$ {valor}'
-            texto_formatado = (id, idped, tipo, valor, situacao, data)
+            valortext = f'R$ {valor}'
+            texto_formatado = (id, idped, tipo, valortext, situacao, data)
             dados.insert(parent = '', index = 0, values = texto_formatado)
         ver_tipos()
 
+    def atualizar_saldo():
+        valores = df.ver_rendimentos('Todos')
+        entradas: float = 0
+        saidas: float = 0
+        saldo: float = 0
+        for linha in valores:
+            id, idped, tipo, valor, situacao, data, detalhes = linha
+            if tipo == 'Entrada':
+                entradas += float(valor)
+            elif tipo == 'Saída':
+                saidas += float(valor)
+        entrada_var.set(f'Total\nR$ {entradas}')
+        saida_var.set(f'Total\nR$ {saidas}')
+        saldo = entradas + saidas
+        if saldo < 0:
+            saldo = 0
+        saldo_var.set(f'Atual\nR$ {saldo}')
+
     def add_rendimento():
         
-
         adicionar = ttk.Toplevel()
         adicionar.title('Adicionar Rendimento')
         adicionar.geometry('320x320')
@@ -860,13 +877,14 @@ def tela_rendimentos():
                     add = df.add_rendimentos(rendimento)
                     if add == "cadastrado":
                         ver_rendimentos("Todos")
+                        atualizar_saldo()
 
         botao_confirmar = ttk.Button(adicionar, text='confirmar', command=confirmar)
         botao_confirmar.pack(pady=10)
 
     def detalhes_rend():
         detalhes = tk.Toplevel()
-        detalhes.geometry('530x325')
+        detalhes.geometry('530x335')
         
         detalhes_label = ttk.Label(detalhes, text='Informações detalhadas')
         detalhes_label.pack(pady=10)
@@ -877,10 +895,10 @@ def tela_rendimentos():
                                                  height=2)
         colunas = [('ID','ID', 30),
                ('IDPED', 'ID Pedido', 70),
-               ('TIPO','Tipo', 50),
-               ('VALOR','Valor', 100),
-               ('SIT','Situação', 100),
-               ('DATA','Data', 100)]
+               ('TIPO','Tipo', 60),
+               ('VALOR','Valor', 90),
+               ('SIT','Situação', 150),
+               ('DATA','Data', 80)]
         for column_name, heading_text, width in colunas:
             if column_name == 'VALOR':
                 rend.column(column_name, anchor='w', width=width)
@@ -891,7 +909,7 @@ def tela_rendimentos():
         rend.pack()
         descricao_label = ttk.Label(detalhes, text='Descrição do Rendimento')
         descricao_label.pack(pady=10)
-        descricao = tk.Text(detalhes, height=10, width=56)
+        descricao = tk.Text(detalhes, height=10, width=67)
         descricao.pack()
         
         lista = df.ver_rendimentos('Todos')
@@ -1018,7 +1036,6 @@ def tela_rendimentos():
                            height=8)
         detalhe.pack(anchor='e', pady=2)   
 
-
         def confirmar():
             try:
                 float(valor_var.get())
@@ -1035,7 +1052,6 @@ def tela_rendimentos():
                     if valor_final.__contains__('-'):
                         if entr_saida == 'Entrada':
                             valor_final = valor_final.replace('-','')
-                            print(valor_final)
                     else:
                         if entr_saida == 'Saída':
                             valor_final = '-'+valor_final
@@ -1044,7 +1060,7 @@ def tela_rendimentos():
                     att = df.alterar_rend(rendimento)
                     if att == "Alterado":
                         ver_rendimentos("Todos")
-
+                        atualizar_saldo()
 
         botao_confirmar = ttk.Button(adicionar, text='confirmar', command=confirmar)
         botao_confirmar.pack(pady=10)
@@ -1168,7 +1184,7 @@ def tela_rendimentos():
 
     botoes_telas_frame = ttk.Frame(rendimentos)
     botoes_telas_frame.pack(pady = 10)
-
+    
     #frame_funcoes = ttk.Frame(rendimentos)
     frame_funcoes = ttk.Frame(rendimentos)
     frame_funcoes.pack()
@@ -1184,9 +1200,6 @@ def tela_rendimentos():
     sel_tipo = ttk.Combobox(frame_botoes_funcoes, textvariable=tipo_var, width=23)
     sel_tipo.pack(side = 'top', pady=2)
     sel_tipo.bind('<<ComboboxSelected>>', ver_rendimentos)
-
-    
-
 
     # Listagem Rendimentos
 
@@ -1205,8 +1218,6 @@ def tela_rendimentos():
         dados.heading(column_name, text=heading_text)
     dados.pack(side='left', pady=10)
     dados.bind('<<TreeviewSelect>>', rendimento_selecionado)
-
-    ver_rendimentos()
 
     def fechar(tela):
         if tela == 'home':
@@ -1257,6 +1268,25 @@ def tela_rendimentos():
                                  command=df.relatorio_rend,width=19)
     botao_relatorio.pack(pady=2)
 
+    entrada_var = tk.StringVar()
+    saida_var = tk.StringVar()
+    saldo_var = tk.StringVar()
+
+    frame_entrada = ttk.Labelframe(frame_botoes_funcoes, bootstyle="success", text='Entradas')
+    frame_entrada.pack()
+    entrada_valor = ttk.Label(frame_entrada, textvariable=entrada_var, width=20, anchor='center')
+    entrada_valor.pack()
+    frame_saldo = ttk.Labelframe(frame_botoes_funcoes, bootstyle='primary', text='Saldo')
+    frame_saldo.pack()
+    saldo_valor = ttk.Label(frame_saldo, textvariable=saldo_var, width=20, anchor='center')
+    saldo_valor.pack()
+    frame_saidas = ttk.Labelframe(frame_botoes_funcoes, bootstyle='danger', text='Saídas')
+    frame_saidas.pack()
+    saidas_valor = ttk.Label(frame_saidas, textvariable=saida_var, width=20, anchor='center')
+    saidas_valor.pack()
+
+    ver_rendimentos()
+    atualizar_saldo()
     rendimentos.protocol("WM_DELETE_WINDOW", lambda: fechar(''))
 
 
